@@ -11,23 +11,23 @@ library(VennDiagram)
 
 #-----------------------------------------------------------------------------------------------------------------------------------
 # Open up gtf file and extract gene level information
-gtf<- import("~/Documents/AnalysisTools/hg19.gtf")
+gtf<- import("~/PATH/hg19.gtf")
 gtf_df<-as.data.frame(gtf)
 gtf_df<-(gtf_df[gtf_df$type=="gene",])[,c(1:6,10,12,14)]
 
 #-----------------------------------------------------------------------------------------------------------------------------------
 # Open up Subread count tables. Here perform analysis on read counts that fall within the whole length of the gene
-featureCounts_IgG_n1<- read.delim("~/Desktop/Lab Files/Sequencing/230802_VH00319_392_AACWLC3M5/featureCounts/featureCounts_NK_hs_1983.gene.tabular", comment.char="#")[,c(1,7)]
-featureCounts_H3K27me3_n1<- read.delim("~/Desktop/Lab Files/Sequencing/230802_VH00319_392_AACWLC3M5/featureCounts/featureCounts_NK_hs_1984.gene.tabular", comment.char="#")[,c(1,7)]
-featureCounts_SC35_n1<- read.delim("~/Desktop/Lab Files/Sequencing/230802_VH00319_392_AACWLC3M5/featureCounts/featureCounts_NK_hs_1985.gene.tabular", comment.char="#")[,c(1,7)]
+featureCounts_IgG_n1<- read.delim("~/PATH/featureCounts_NK_hs_1983.gene.tabular", comment.char="#")[,c(1,7)]
+featureCounts_H3K27me3_n1<- read.delim("~/PATH/featureCounts_NK_hs_1984.gene.tabular", comment.char="#")[,c(1,7)]
+featureCounts_SC35_n1<- read.delim("~/PATH/featureCounts_NK_hs_1985.gene.tabular", comment.char="#")[,c(1,7)]
 
-featureCounts_IgG_n2<- read.delim("~/Desktop/Lab Files/Sequencing/230802_VH00319_392_AACWLC3M5/featureCounts/featureCounts_NK_hs_2004.gene.tabular", comment.char="#")[,c(1,7)]
-featureCounts_H3K27me3_n2<- read.delim("~/Desktop/Lab Files/Sequencing/230802_VH00319_392_AACWLC3M5/featureCounts/featureCounts_NK_hs_2005.gene.tabular", comment.char="#")[,c(1,7)]
-featureCounts_SC35_n2<- read.delim("~/Desktop/Lab Files/Sequencing/230802_VH00319_392_AACWLC3M5/featureCounts/featureCounts_NK_hs_2006.gene.tabular", comment.char="#")[,c(1,7)]
+featureCounts_IgG_n2<- read.delim("~/PATH/featureCounts_NK_hs_2004.gene.tabular", comment.char="#")[,c(1,7)]
+featureCounts_H3K27me3_n2<- read.delim("~/PATH/featureCounts_NK_hs_2005.gene.tabular", comment.char="#")[,c(1,7)]
+featureCounts_SC35_n2<- read.delim("~/PATH/featureCounts_NK_hs_2006.gene.tabular", comment.char="#")[,c(1,7)]
 
-featureCounts_IgG_n3<- read.delim("~/Desktop/Lab Files/Sequencing/231128_VH00699_395_AAF5L7MM5/featureCounts/featureCounts_NK_hs_2030.gene.tabular", comment.char="#")[,c(1,7)]
-featureCounts_H3K27me3_n3<- read.delim("~/Desktop/Lab Files/Sequencing/231128_VH00699_395_AAF5L7MM5/featureCounts/featureCounts_NK_hs_2031.gene.tabular", comment.char="#")[,c(1,7)]
-featureCounts_SC35_n3<- read.delim("~/Desktop/Lab Files/Sequencing/231128_VH00699_395_AAF5L7MM5/featureCounts/featureCounts_NK_hs_2032.gene.tabular", comment.char="#")[,c(1,7)]
+featureCounts_IgG_n3<- read.delim("~/PATH/featureCounts_NK_hs_2030.gene.tabular", comment.char="#")[,c(1,7)]
+featureCounts_H3K27me3_n3<- read.delim("~/PATH/featureCounts_NK_hs_2031.gene.tabular", comment.char="#")[,c(1,7)]
+featureCounts_SC35_n3<- read.delim("~/PATH/featureCounts_NK_hs_2032.gene.tabular", comment.char="#")[,c(1,7)]
 
 #-----------------------------------------------------------------------------------------------------------------------------------
 # Set up the metadata for DESeq analysis
@@ -277,14 +277,14 @@ saveBed(HEK293T_H3K27me3_UP_genebody)
 # Will be used for generating volcano plot in Figure 1D. 
 
 # Open up Subread count tables. Here perform analysis on read counts that fall within the exons of genes
-featureCounts_IgG_n1<- read.delim("~/Desktop/Lab Files/Sequencing/230802_VH00319_392_AACWLC3M5/featureCounts/featureCounts_NK_hs_1983.exon.tabular", comment.char="#")[,c(1,7)]
-featureCounts_SC35_n1<- read.delim("~/Desktop/Lab Files/Sequencing/230802_VH00319_392_AACWLC3M5/featureCounts/featureCounts_NK_hs_1985.exon.tabular", comment.char="#")[,c(1,7)]
+featureCounts_IgG_n1<- read.delim("~/PATH/featureCounts_NK_hs_1983.exon.tabular", comment.char="#")[,c(1,7)]
+featureCounts_SC35_n1<- read.delim("~/PATH/featureCounts_NK_hs_1985.exon.tabular", comment.char="#")[,c(1,7)]
 
-featureCounts_IgG_n2<- read.delim("~/Desktop/Lab Files/Sequencing/230802_VH00319_392_AACWLC3M5/featureCounts/featureCounts_NK_hs_2004.exon.tabular", comment.char="#")[,c(1,7)]
-featureCounts_SC35_n2<- read.delim("~/Desktop/Lab Files/Sequencing/230802_VH00319_392_AACWLC3M5/featureCounts/featureCounts_NK_hs_2006.exon.tabular", comment.char="#")[,c(1,7)]
+featureCounts_IgG_n2<- read.delim("~/PATH/featureCounts_NK_hs_2004.exon.tabular", comment.char="#")[,c(1,7)]
+featureCounts_SC35_n2<- read.delim("~/PATH/featureCounts_NK_hs_2006.exon.tabular", comment.char="#")[,c(1,7)]
 
-featureCounts_IgG_n3<- read.delim("~/Desktop/Lab Files/Sequencing/231128_VH00699_395_AAF5L7MM5/featureCounts/featureCounts_NK_hs_2030.exon.tabular", comment.char="#")[,c(1,7)]
-featureCounts_SC35_n3<- read.delim("~/Desktop/Lab Files/Sequencing/231128_VH00699_395_AAF5L7MM5/featureCounts/featureCounts_NK_hs_2032.exon.tabular", comment.char="#")[,c(1,7)]
+featureCounts_IgG_n3<- read.delim("~/PATH/featureCounts_NK_hs_2030.exon.tabular", comment.char="#")[,c(1,7)]
+featureCounts_SC35_n3<- read.delim("~/PATH/featureCounts_NK_hs_2032.exon.tabular", comment.char="#")[,c(1,7)]
 
 #-----------------------------------------------------------------------------------------------------------------------------------
 # Set up the metadata for DESeq analysis
