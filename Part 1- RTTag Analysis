@@ -1,0 +1,80 @@
+1.	Align raw reads to the hg19 genome assembly using HISAT2 and generating a BAM (binary alignment map) using SAMtools. Accomplish this by running the following command:
+
+ hisat2 --max-intronlen 30000 --rna-strandness F --summary-file input_name_HISAT2_summary -x PATH/hg19 -U input.fastq.gz | samtools view -S -b > output.bam
+
+2.	Count the number of aligned reads in BAM files overlap with referentce transcriptome GTF file using featureCounts tool from Subread by running the following command:
+
+featureCounts -s 1 -t exon -g gene_id -a hg19.gtf -o sample_name.exon.tabular input.bam
+
+3. 	Perform differential enrichment analysis using DESeq2 in R studio. Use the following commands:
+
+# Load necesssary packages
+library(rtracklayer)
+library(DESeq2)
+
+# Load gtf file
+gtf<- import("PATH/hg19.gtf")
+gtf_df<-as.data.frame(gtf)
+gtf_df<-(gtf_df[gtf_df$type=="gene",])[,c(1:6,10,12,14)]
+
+# Load featureCounts count tables
+featureCounts_IgG_n1<-read.delim("PATH/featureCounts/IgG_n1.exon.tabular", comment.char="#")[,c(1,7)]
+featureCounts_SC35_n1<- read.delim("PATH/featureCounts/SC35_n1.exon.tabular", comment.char="#")[,c(1,7)]
+featureCounts_IgG_n2<- read.delim("PATH/featureCounts/IgG_n2.exon.tabular", comment.char="#")[,c(1,7)]
+featureCounts_SC35_n2<- read.delim("PATH/featureCounts/SC35_n2.exon.tabular", comment.char="#")[,c(1,7)]
+featureCounts_IgG_n3<- read.delim("PATH/featureCounts/IgG_n3.exon.tabular", comment.char="#")[,c(1,7)]
+
+featureCounts_SC35_n3<- read.delim("PATH/featureCounts/SC35_n3.exon.tabular", comment.char="#")[,c(1,7)]
+
+# Assemble featureCount count tables into a matrix
+Counts<- cbind(featureCounts_IgG_n1[,2], featureCounts_SC35_n1[,2], 
+               featureCounts_IgG_n2[,2], featureCounts_SC35_n2[,2],
+               featureCounts_IgG_n3[,2], featureCounts_SC35_n3[,2])
+
+colnames(Counts)<-c("IgG n1", "SC35 n1", "IgG n2", "SC35 n2", "IgG n3", "SC35 n3")
+rownames(Counts)<-featureCounts_IgG_n1[,1]
+
+# Assemble metadata for the featureCount count table matrix
+Protein<- c("IgG", "SC35", "IgG", "SC35", "IgG", "SC35")
+Condition<- c("n1","n1", "n2","n2", "n3","n3")
+
+Metadata<- cbind(Protein, Condition)
+rownames(Metadata)<- c("IgG n1", "SC35 n1","IgG n2", "SC35 n2", "IgG n3", "SC35 n3")
+
+# Perform DESeq normalization
+Count_Table <- DESeqDataSetFromMatrix(countData = Counts, colData = Metadata,
+                                      design = ~ Protein + Condition)
+
+Count_Table_DESeq<- DESeq(Count_Table)
+
+Counts_normalized<- cbind(gtf_df,counts(Count_Table_DESeq, normalized=TRUE))
+
+# Function used to retrieve differentially enriched transcripts 
+Retrieve <- function(n1, n2, n3, n4) {
+  n1 <- n1
+  n2 <- n2
+  n3 <- n3
+  n4 <- n4
+  
+  Results<-results(n4, contrast= c("Protein", n1, n2), name = n3)
+  Results_log2<-Results$log2FoldChange
+  Results_pvalue<-Results$padj
+  diffexpressed <- "NO"
+  Results_combined<- cbind(gtf_df, Results_log2, Results_pvalue, diffexpressed)
+  Results_combined<- Results_combined[!is.na(Results_log2),]
+  Results_combined<-as.data.frame(Results_combined)
+  Results_combined$diffexpressed[Results_combined$Results_log2 >1 &
+                                   Results_combined$Results_pvalue <0.05] <- "UP"
+  Results_combined$diffexpressed[Results_combined$Results_log2 < -1 &
+                                   Results_combined$Results_pvalue <0.05] <- "DOWN"
+  Results_combined<-Results_combined[Results_combined$diffexpressed != "NO",]
+  return(Results_combined)
+}
+
+
+# Use the function above to call differentially enriched transcripts and subdivide based on enriched or depleted
+Differentially_enriched_UPDOWN <- Retrieve("SC35", "IgG", "Protein_SC35_vs_IgG", Count_Table_DESeq)
+
+Differentially_enriched_UP <- Differentially_enriched_UPDOWN[(Differentially_enriched_UPDOWN$diffexpressed=="UP"),]
+Differentially_enriched_DOWN <- Differentially_enriched_UPDOWN[(Differentially_enriched_UPDOWN$diffexpressed=="DOWN"),]
+
