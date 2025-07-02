@@ -23,7 +23,6 @@ featureCounts_SC35_n1<- read.delim("PATH/featureCounts/SC35_n1.exon.tabular", co
 featureCounts_IgG_n2<- read.delim("PATH/featureCounts/IgG_n2.exon.tabular", comment.char="#")[,c(1,7)]
 featureCounts_SC35_n2<- read.delim("PATH/featureCounts/SC35_n2.exon.tabular", comment.char="#")[,c(1,7)]
 featureCounts_IgG_n3<- read.delim("PATH/featureCounts/IgG_n3.exon.tabular", comment.char="#")[,c(1,7)]
-
 featureCounts_SC35_n3<- read.delim("PATH/featureCounts/SC35_n3.exon.tabular", comment.char="#")[,c(1,7)]
 
 # Assemble featureCount count tables into a matrix
